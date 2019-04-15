@@ -1,6 +1,7 @@
 use std::process::Command;
 use std::convert::{ From, Into };
 use std::f64;
+use std::rc::Rc;
 
 use plotlib::view::ContinuousView;
 use plotlib::page::Page;
@@ -9,8 +10,11 @@ use plotlib::style::Line as linestyle;
 
 use cursive::Cursive;
 use cursive::views::{
-    Dialog, TextView, DummyView, EditView, LinearLayout
+    Dialog, TextView, DummyView, EditView,
+    LinearLayout, Button, IdView
 };
+
+use cursive::view::{ Identifiable, Boxable };
 
 mod rect;
 use crate::rect::ZRect;
