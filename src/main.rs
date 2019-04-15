@@ -28,10 +28,57 @@ mod polar;
 use crate::polar::ZPolar;
 
 fn main() {
+    let mut siv = Cursive::default();
 
-    let z = ZRect::new(4., 6.);
-    let z1_tuple: (f64, f64) = z.clone().into();
-    let z1_polar = z.to_polar();
+    let dialog = Dialog::around(
+        LinearLayout::vertical()
+        .child(TextView::new("Input Impedance real"))
+        .child(
+            EditView::new()
+            .with_id("imp_rect_real")
+            .fixed_width(20)
+        )
+        .child(TextView::new("Input Impedance img"))
+        .child(
+            EditView::new()
+            .with_id("imp_rect_img")
+            .fixed_width(20)
+        )
+        .child(TextView::new("Frequency (Hz)"))
+        .child(
+            EditView::new()
+            .with_id("freq")
+            .fixed_width(20)
+        )
+        .child(
+            Button::new("Submit", |s| {
+                let imp_rect_real = s.
+                    call_on_id("imp_rect_real", |view: &mut EditView| {
+                        view.get_content()
+                    }).unwrap();
+                let imp_rect_img = s.
+                    call_on_id("imp_rect_img", |view: &mut EditView| {
+                        view.get_content()
+                    }).unwrap();
+                let freq = s.
+                    call_on_id("freq", |view: &mut EditView| {
+                        view.get_content()
+                    }).unwrap();
+                eprintln!("woop");
+                let imp_rect_real = imp_rect_real.parse::<f64>().unwrap();
+                let imp_rect_img = imp_rect_img.parse::<f64>().unwrap();
+                let freq = freq.parse::<f64>().unwrap();
+                componentize(s, (imp_rect_real, imp_rect_img), freq);
+            })
+        )
+    ).title("Results of Calculation");
+
+    siv.add_layer(dialog);
+    siv.run();
+}
+
+fn componentize(s: &mut Cursive, z: (f64, f64), f: f64) {
+    let z1_polar: ZPolar = ZRect::new(z.0, z.1).to_polar();
     let z1: (f64, f64) = z.clone().into();
 
     let x: Reactance = match (z1.1).is_sign_negative() {
