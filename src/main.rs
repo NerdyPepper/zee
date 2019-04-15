@@ -123,10 +123,10 @@ fn draw_graph(z: (f64, f64)) {
         &Style::new().colour("red")
     );
     let resistance = Line::new(&[(0., 0.), (z.0, 0.)]).style(
-        &Style::new().colour("red")
+        &Style::new().colour("blue")
     );
     let reactance = Line::new(&[(0., 0.), (0., z.1)]).style(
-        &Style::new().colour("red")
+        &Style::new().colour("blue")
     );
 
     let v = ContinuousView::new()
@@ -141,4 +141,32 @@ fn draw_graph(z: (f64, f64)) {
         .y_range(-10., 10.);
     Page::single(&v).save("line.svg").unwrap();
 
+}
+
+fn parser(input: &str) -> (f64, f64){
+    let basic = input.trim();
+    let basic = basic.replace(" ", "");
+
+    let mut letter_buf = vec![];
+    let mut parts: Vec<String> = vec![];
+
+
+    for letter in basic.chars() {
+        match letter {
+            '+' | '-' => {
+                parts.push(letter_buf.iter().collect());
+                letter_buf.clear();
+            }
+            _ => {
+                letter_buf.push(letter);
+            }
+        }
+    };
+
+    parts.push(letter_buf.iter().collect());
+
+    let part_1 = parts[0].parse::<f64>().unwrap();
+    let part_2 = parts[1].replace("j", "").parse::<f64>().unwrap();
+
+    (part_1, part_2)
 }
