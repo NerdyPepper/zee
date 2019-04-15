@@ -86,23 +86,26 @@ fn componentize(s: &mut Cursive, z: (f64, f64), f: f64) {
         _ => Reactance::C(z1.1),
     };
 
-    let f = 50.;
-    let omega = 2.0 * f64::consts::PI * f ;
+    let omega = 2.0 * f64::consts::PI * f;
 
     let component = match x {
         Reactance::I(x_l) => format!("Inductance: {:.5} H", x_l as f64 / omega as f64),
         Reactance::C(x_c) => format!("Capacitance: {:.5} C", 1. / (x_c as f64 * omega as f64)),
     };
 
-    let mut main = Cursive::default();
-    let dialog = Dialog::around(
-        LinearLayout::vertical()
-        .child(TextView::new(format!("Impedance (rectangular): {:.3}{:+.3}j", z1_tuple.0, z1_tuple.1)))
-        .child(TextView::new(format!("Impedance (polar): {:.3}∠{:.3}", z1_polar.0, z1_polar.1)))
-        .child(TextView::new(&component[..]))
-    ).title("Results of Calculation");
-    main.add_layer(dialog);
-
+    s.add_layer(
+        Dialog::around(
+            LinearLayout::vertical()
+            .child(TextView::new(format!("Impedance (Rectangular): {:.5} {:+.5}j", z1.0, z1.1)))
+            .child(TextView::new(format!("Impedance (Polar): {:.5}A{:.5}", z1_polar.0, z1_polar.1)))
+            .child(TextView::new(component))
+        )
+        .button("Ok", |s| match s.pop_layer() {
+            _ => {}
+        })
+    );
+    draw_graph(z);
+}
 
     let x_axis = Line::new(&[(-100., 0.), (100., 0.)])
         .style(
@@ -133,29 +136,4 @@ fn componentize(s: &mut Cursive, z: (f64, f64), f: f64) {
         .x_range(-10., 10.)
         .y_range(-10., 10.);
     Page::single(&v).save("line.svg").unwrap();
-
-    Command::new("firefox")
-        .arg("-new-window")
-        .arg("./line.svg")
-        .output()
-        .unwrap();
-
-    main.run();
-}
-
-fn componentize(z: &ZRect, f: f64) {
-    let z1: (f64, f64) = z.clone().into();
-
-    let x: Reactance = match (z1.1).is_sign_negative() {
-        true => Reactance::I(-z1.1),
-        _ => Reactance::C(z1.1),
-    };
-
-    let omega = 2.0 * f64::consts::PI * f;
-
-    let component = match x {
-        Reactance::I(x_l) => println!("Inductance: {:.5} H", x_l as f64 / omega as f64),
-        Reactance::C(x_c) => println!("Capacitance: {:.5} C", 1. / (x_c as f64 * omega as f64)),
-    };
-
 }
