@@ -1,46 +1,17 @@
 use std::process::Command;
 use std::convert::{ From, Into };
+use std::f64;
 
 use plotlib::view::ContinuousView;
-use plotlib::view::View;
 use plotlib::page::Page;
 use plotlib::line::{ Line, Style };
 use plotlib::style::Line as linestyle;
 
-#[derive(Debug)]
-struct ZRect(f64,f64);
+mod rect;
+use crate::rect::ZRect;
 
-#[derive(Debug)]
-struct ZPolar(f64,f64);
-
-impl ZRect {
-    fn new(x: f64, y: f64) -> Self {
-        ZRect(x, y)
-    }
-    fn to_polar(&self) -> ZPolar {
-        let angle = {
-            if self.0 > 0. && self.1 > 0. {
-                (self.1/self.0).atan().to_degrees()
-            } else if self.0 <= 0. && self.1 > 0. {
-                180. - (self.1/-self.0).atan().to_degrees()
-            } else if self.0 < 0. && self.1 < 0. {
-                -180. + (self.1/self.0).atan().to_degrees()
-            } else {
-                - (-self.1/self.0).atan().to_degrees()
-            }
-        };
-        ZPolar(
-            (self.0*self.0 + self.1*self.1).sqrt(),
-            angle
-        )
-    }
-}
-
-impl From<ZRect> for (f64, f64) {
-    fn from(x: ZRect) -> Self {
-        (x.0, x.1)
-    }
-}
+mod polar;
+use crate::polar::ZPolar;
 
 fn main() {
     let z1 = ZRect::new(3., 4.);
