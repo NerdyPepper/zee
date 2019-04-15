@@ -71,6 +71,9 @@ fn main() {
                 let freq = freq.parse::<f64>().unwrap();
                 componentize(s, (imp_rect_real, imp_rect_img), freq);
             })
+        ) 
+        .child(
+            Button::new("Quit", |s| s.quit())
         )
     ).title("Results of Calculation");
 
@@ -98,11 +101,18 @@ fn componentize(s: &mut Cursive, z: (f64, f64), f: f64) {
         Dialog::around(
             LinearLayout::vertical()
             .child(TextView::new(format!("Impedance (Rectangular): {:.5} {:+.5}j", z1.0, z1.1)))
-            .child(TextView::new(format!("Impedance (Polar): {:.5}A{:.5}", z1_polar.0, z1_polar.1)))
+            .child(TextView::new(format!("Impedance (Polar): {:.5} ∠ {:.5}", z1_polar.0, z1_polar.1)))
             .child(TextView::new(component))
         )
         .button("Ok", |s| match s.pop_layer() {
             _ => {}
+        })
+        .button("Show Graph", |_| {
+            Command::new("firefox")
+                .arg("-new-window")
+                .arg("./line.svg")
+                .output()
+                .unwrap();
         })
     );
     draw_graph(z);
@@ -138,4 +148,5 @@ fn draw_graph(z: (f64, f64)) {
         .x_range(-10., 10.)
         .y_range(-10., 10.);
     Page::single(&v).save("line.svg").unwrap();
+
 }
