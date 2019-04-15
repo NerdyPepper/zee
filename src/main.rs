@@ -33,16 +33,10 @@ fn main() {
 
     let dialog = Dialog::around(
         LinearLayout::vertical()
-        .child(TextView::new("Input Impedance real"))
+        .child(TextView::new("Input Impedance (X + jY)"))
         .child(
             EditView::new()
-            .with_id("imp_rect_real")
-            .fixed_width(20)
-        )
-        .child(TextView::new("Input Impedance img"))
-        .child(
-            EditView::new()
-            .with_id("imp_rect_img")
+            .with_id("imp_rect")
             .fixed_width(20)
         )
         .child(TextView::new("Frequency (Hz)"))
@@ -53,12 +47,8 @@ fn main() {
         )
         .child(
             Button::new("Submit", |s| {
-                let imp_rect_real = s.
-                    call_on_id("imp_rect_real", |view: &mut EditView| {
-                        view.get_content()
-                    }).unwrap();
-                let imp_rect_img = s.
-                    call_on_id("imp_rect_img", |view: &mut EditView| {
+                let imp_rect = s.
+                    call_on_id("imp_rect", |view: &mut EditView| {
                         view.get_content()
                     }).unwrap();
                 let freq = s.
@@ -66,8 +56,7 @@ fn main() {
                         view.get_content()
                     }).unwrap();
                 eprintln!("woop");
-                let imp_rect_real = imp_rect_real.parse::<f64>().unwrap();
-                let imp_rect_img = imp_rect_img.parse::<f64>().unwrap();
+                let (imp_rect_real, imp_rect_img) = parser(&imp_rect);
                 let freq = freq.parse::<f64>().unwrap();
                 componentize(s, (imp_rect_real, imp_rect_img), freq);
             })
@@ -84,6 +73,8 @@ fn main() {
 fn componentize(s: &mut Cursive, z: (f64, f64), f: f64) {
     let z1_polar: ZPolar = ZRect::new(z.0, z.1).to_polar();
     let z1: (f64, f64) = z.clone().into();
+
+    let r: f64 = z1.0.abs();
 
     let x: Reactance = match (z1.1).is_sign_negative() {
         true => Reactance::I(-z1.1),
@@ -103,6 +94,7 @@ fn componentize(s: &mut Cursive, z: (f64, f64), f: f64) {
             .child(TextView::new(format!("Impedance (Rectangular): {:.5} {:+.5}j", z1.0, z1.1)))
             .child(TextView::new(format!("Impedance (Polar): {:.5} ∠ {:.5}", z1_polar.0, z1_polar.1)))
             .child(TextView::new(component))
+            .child(TextView::new(format!("Resistance: {:.5}", r)))
         )
         .button("Ok", |s| match s.pop_layer() {
             _ => {}
