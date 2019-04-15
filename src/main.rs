@@ -14,14 +14,34 @@ mod polar;
 use crate::polar::ZPolar;
 
 fn main() {
+    let x_axis = Line::new(&[(-100., 0.), (100., 0.)])
+        .style(
+            &Style::new().colour("grey")
+        );
+    let y_axis = Line::new(&[(0., 100.), (0., -100.)])
+        .style(
+            &Style::new().colour("grey")
+        );
     let z1 = ZRect::new(3., 4.);
     let z1_polar = z1.to_polar();
-    let z1_tuple = z1.into();
-    let z1_line = Line::new(&[(0., 0.), z1_tuple]).style(
+    let z1_tuple = z1.clone().into();
+
+    let z_resultant = Line::new(&[(0., 0.), z1_tuple]).style(
         &Style::new().colour("red")
     );
+    let resistance = Line::new(&[(0., 0.), (z1.0, 0.)]).style(
+        &Style::new().colour("red")
+    );
+    let reactance = Line::new(&[(0., 0.), (0., z1.1)]).style(
+        &Style::new().colour("red")
+    );
+
     let v = ContinuousView::new()
-        .add(&z1_line)
+        .add(&x_axis)
+        .add(&y_axis)
+        .add(&z_resultant)
+        .add(&resistance)
+        .add(&reactance)
         .x_range(-10., 10.)
         .y_range(-10., 10.);
     Page::single(&v).save("line.svg").unwrap();
@@ -32,3 +52,5 @@ fn main() {
         .output()
         .unwrap();
 }
+
+fn gen_info(){}
