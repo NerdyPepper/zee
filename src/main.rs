@@ -107,6 +107,7 @@ fn componentize(s: &mut Cursive, z: (f64, f64), f: f64) {
     draw_graph(z);
 }
 
+fn draw_graph(z: (f64, f64)) {
     let x_axis = Line::new(&[(-100., 0.), (100., 0.)])
         .style(
             &Style::new().colour("#efefef")
@@ -115,13 +116,13 @@ fn componentize(s: &mut Cursive, z: (f64, f64), f: f64) {
         .style(
             &Style::new().colour("#efefef")
         );
-    let z_resultant = Line::new(&[(0., 0.), z1_tuple]).style(
+    let z_resultant = Line::new(&[(0., 0.), z]).style(
         &Style::new().colour("red")
     );
-    let resistance = Line::new(&[(0., 0.), (z1.0, 0.)]).style(
+    let resistance = Line::new(&[(0., 0.), (z.0, 0.)]).style(
         &Style::new().colour("red")
     );
-    let reactance = Line::new(&[(0., 0.), (0., z1.1)]).style(
+    let reactance = Line::new(&[(0., 0.), (0., z.1)]).style(
         &Style::new().colour("red")
     );
 
