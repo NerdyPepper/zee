@@ -38,11 +38,11 @@ fn main() {
 
     let x_axis = Line::new(&[(-100., 0.), (100., 0.)])
         .style(
-            &Style::new().colour("grey")
+            &Style::new().colour("#efefef")
         );
     let y_axis = Line::new(&[(0., 100.), (0., -100.)])
         .style(
-            &Style::new().colour("grey")
+            &Style::new().colour("#efefef")
         );
     let z_resultant = Line::new(&[(0., 0.), z1_tuple]).style(
         &Style::new().colour("red")
@@ -70,4 +70,8 @@ fn main() {
         .arg("./line.svg")
         .output()
         .unwrap();
+}
+
+fn pprint() {
+
 }
