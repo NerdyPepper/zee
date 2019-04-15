@@ -29,6 +29,7 @@ use crate::polar::ZPolar;
 
 fn main() {
     let mut siv = Cursive::default();
+    siv.add_global_callback('q', |s| s.quit());
 
     let dialog = Dialog::around(
         LinearLayout::vertical()
