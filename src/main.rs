@@ -19,6 +19,23 @@ mod polar;
 use crate::polar::ZPolar;
 
 fn main() {
+    let z1 = ZRect::new(3., 4.);
+    let z1_polar = z1.to_polar();
+    let z1_tuple = z1.clone().into();
+
+    let X: Reactance = match (z1.1).is_sign_negative() {
+        true => Reactance::I(z1.1),
+        _ => Reactance::C(z1.1),
+    };
+
+    let freq = 50.;
+    let omega = 2.0 * f64::consts::PI * freq;
+
+    let component = match X {
+        Reactance::I(Xl) => Xl as f64 / omega as f64,
+        Reactance::C(Xc) => Xc as f64 / omega as f64,
+    };
+
     let x_axis = Line::new(&[(-100., 0.), (100., 0.)])
         .style(
             &Style::new().colour("grey")
